@@ -13,6 +13,12 @@ TEAM 4 - YELLOW
 */
 
 const global = {
+  waveData: [
+    "w,90,14,40,0|t,4,3,3,Move with the WASD or arrow keys|p,2,100,30",
+    "e,1,55,20,0|e,2,50,20,0",
+    "e,1,5,5,0",""],
+
+    
   fontHeightToWidth: 1.9,
   aspectRatio: 16 / 9,
 
@@ -33,6 +39,13 @@ const global = {
       hp: 3,
       projectileType: 0,
       cooldownReset: 10,
+    },
+    {
+      name: "tie-2",
+      shape: "[=]",
+      hp: 5,
+      projectileType: 1,
+      cooldownReset: 15,
     },
   ],
   projectileData: [
@@ -62,7 +75,7 @@ const global = {
       shapes: "◜◝◞◟"
     }
   ],
-  waveData: ["e,1,55,20,0|e,1,54,20,0|w,90,14,40,0","","",""],
+
   numOfTeams: 6,
   teamColors: [
     [192, 192, 192],
@@ -111,6 +124,34 @@ function keyReleased() {
 }
 function draw() {
   mainLoop();
+}
+
+class FloatingText {
+  constructor(team, x, y, txt) {
+    objs.push(this)
+    this.team = team
+    this.x = x
+    this.y = y
+    this.shape = txt
+  }
+  update() {}
+}
+
+class Portal {
+  constructor(team, x, y, shape) {
+    objs.push(this)
+    enemies.push(this)
+    this.team = team
+    this.x = x
+    this.y = y
+    this.shape = shape
+  }
+  update(termi) {
+    let s = '123\n4☐5\n678'
+    let num = Math.floor(frameCount / 4) % 8
+    s = s.replace(num, "•").replace(/\d/g, ' ')
+    this.shape = s
+  }
 }
 
 class Wall {
@@ -199,13 +240,16 @@ class Player {
   }
 
   displayStats(termi) {
+    // wave
+    termi.setGroup(0, 2, 0, `WAVE ${wave}`)
+
     // hp
     let n = 20 * this.hp / this.hpMax
     let betweenSymbol = ' ░▒▓█'.charAt(Math.floor(5*(n%1)))
     n = Math.floor(n) 
     let line = ` HP: |` + '█'.repeat(n) + betweenSymbol + ' '.repeat(20-n)
     line += `| ${this.hp} / ${this.hpMax}`
-    terminal.setGroup(0, 2, terminal.rows-3, line)
+    termi.setGroup(0, 2, termi.rows-3, line)
 
     // exp
     n = 20 * this.exp / this.expNext
@@ -213,7 +257,7 @@ class Player {
     n = Math.floor(n) 
     line = `EXP: |` + '█'.repeat(n) + betweenSymbol + ' '.repeat(20-n)
     line += `| ${this.exp} / ${this.expNext}`
-    terminal.setGroup(this.team, 2, terminal.rows-2, line)
+    termi.setGroup(this.team, 2, termi.rows-2, line)
   }
 
   update(termi) {
@@ -226,6 +270,10 @@ class Player {
       this.x += this.speed * global.fontHeightToWidth;
     if (keys[UP_ARROW] || keys[87]) this.y -= this.speed;
     if (keys[DOWN_ARROW] || keys[83]) this.y += this.speed;
+
+    // Bounds
+    this.x = constrain(this.x, 0, termi.cols-1-Math.ceil(this.shape.length/2))
+    this.y = constrain(this.y, 0, termi.rows-1)
 
     // Click to shoot
     if (mouseIsPressed) {
@@ -368,7 +416,7 @@ class Terminal {
   state = "intro";
   userTyped = "";
   favoriteLetter = "";
-  introFrames =0;///99999999999!
+  introFrames =99999999999///! 0
 
   constructor() {
     this.onResizeWindow();
@@ -442,6 +490,10 @@ class Terminal {
       } else {
         if (key.length === 1) this.favoriteLetter = key
         else if (key === "Enter") this.favoriteLetter += " "
+      }
+    } else {
+      if (key == "f") {// f key
+        this.fullscreen = !this.fullscreen
       }
     }
   }
@@ -587,7 +639,7 @@ class Terminal {
     }
 
     // Display text
-    let renderOrder = [5, 1, 2, 0]
+    let renderOrder = [5, 1, 2, 3, 4, 0]
     let snapX = 0;
     let snapY = 0;
     if (this.fullscreen) {
@@ -668,22 +720,31 @@ let projectiles = [];
 let me;
 
 function generateWave(wave) {
+  // Hard clear background
+  terminal.clearTxt(true)
+
+
   if (wave === 0) {
     me = new Player(2, 28, 7);
     me.shape = `(${terminal.favoriteLetter.charAt(0)})`
   }
+  enemies = [me]
+  walls = []
+  projectiles = []
+  objs = [me]
+
   let data = global.waveData[wave]
   let classes = {
     "e": Enemy,
     "w": Wall,
     "f": WallFragment,
-
+    "t": FloatingText,
+    "p": Portal
   }
   for (let d of data.split("|")) {
     let entityData = d.split(',')
     let args = entityData.slice(1).map(val => isNaN(val) ? val : parseInt(val))
-    let e = new classes[entityData[0]](...args)
-    console.log(e,e.x,e.y);
+    new classes[entityData[0]](...args)
   }
 
 }
@@ -737,8 +798,8 @@ function mainLoop() {
   }
 
   // Lose wave
-  else if (me?.hp <= 0) {
-    
+  else if (me?.hp <= 10) {
+    me.hp = 10///////////////////wip
   }
 
   terminal.update();
