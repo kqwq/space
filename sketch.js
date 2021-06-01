@@ -4,6 +4,9 @@
   cols = 130, x = 0 to x = 129
   rows = 32, y = 0 to y = 31
 
+  X MID 65
+  Y MID 15
+
 TEAM 0 - Neutral (e.g. walls)
 TEAM 1 - Enemy or RED
 TEAM 2 - Player or BLUE
@@ -14,11 +17,13 @@ TEAM 4 - YELLOW
 
 const global = {
   waveData: [
-    "w,90,14,40,0|t,4,3,3,Move with the WASD or arrow keys|p,2,100,30",
-    "e,1,55,20,0|e,2,50,20,0",
-    "e,1,5,5,0",""],
+    "p,60,8|w,90,14,40,-1|t,4,3,3,Move with the WASD or arrow keys\n\n  Reach the (P)ortal",
+    "p,5,3|e,1,3,20,0|w,0,27,25,0|t,4,60,3,Shoot with the mouse button\n\n  Destroy all enemies to advance",
+    "p,120,27|w,40,0,40,15|w,80,16,80,31|e,1,65,19,0|e,1,115,6,0|e,1,115,21,1",
+    "p,10,4|w,45,10,85,20|w,85,20,45,10|e,1,65,15,0|e,1,62,15,0|e,1,65,15,0|e,1,65,15,0|e,1,65,15,2",
+    "p,110,15|w,30,0,30,31|w,60,0,60,31|w,90,0,90,31|t,4,2,10,There are too many enemies\nto fight at once.\nPress SPACEBAR to toggle\nfullscreen.|t,4,32,16,Enemies will not shoot\nwhen not in view.\nUse this to your advantage."
+  ],
 
-    
   fontHeightToWidth: 1.9,
   aspectRatio: 16 / 9,
 
@@ -26,54 +31,148 @@ const global = {
   height: 0,
   playerData: [
     {
-      hp: 27,
-      speed: 0.4,
+      hp: 10,
+      speed: 0.3,
       cooldownReset: 10,
-      projectileType: 4
-    }
+      projectileType: 0,
+    },
+    {
+      hp: 20,
+      speed: 0.34,
+      cooldownReset: 8,
+      projectileType: 0,
+    },
+    {
+      hp: 30,
+      speed: 0.34,
+      cooldownReset: 6,
+      projectileType: 1,
+    },
   ],
   enemyData: [
     {
-      name: "tie-1",
-      shape: "(=)",
-      hp: 3,
+      name: "tie-0",
+      shape: "(-)",
+      hp: 2,
+      speed: 0.2,
       projectileType: 0,
-      cooldownReset: 10,
+      cooldownReset: 99,
+    },
+    {
+      name: "tie-1",
+      shape: "[-]",
+      hp: 4,
+      speed: 0.3,
+      projectileType: 0,
+      cooldownReset: 39,
     },
     {
       name: "tie-2",
-      shape: "[=]",
-      hp: 5,
-      projectileType: 1,
+      shape: "{-}",
+      hp: 2,
+      speed: 0.4,
+      projectileType: 0,
       cooldownReset: 15,
+    },
+    {//E:3
+      name: "bomb-3",
+      shape: "(Θ)",
+      hp: 2,
+      speed: 0.2,
+      projectileType: 3,
+      cooldownReset: 149,
+    },
+    {//E:4
+      name: "bomb-4",
+      shape: "[Θ]",
+      hp: 4,
+      speed: 0.4,
+      projectileType: 3,
+      cooldownReset: 109,
+    },
+    {
+      name: "fighter-5",
+      shape: "(=)",
+      hp: 4,
+      speed: 0.2,
+      projectileType: 1,
+      cooldownReset: 59,
+    },
+    {
+      name: "fighter-6",
+      shape: "[=]",
+      hp: 4,
+      speed: 0.3,
+      projectileType: 1,
+      cooldownReset: 39,
+    },
+    {
+      name: "fighter-7",
+      shape: "(=)",
+      hp: 2,
+      speed: 0.4,
+      projectileType: 1,
+      cooldownReset: 19,
+    },
+    {
+      name: "attack-8",
+      shape: "(Ξ)",
+      hp: 2,
+      speed: 0.2,
+      projectileType: 2,
+      cooldownReset: 19,
+    },
+    {
+      name: "attack-9",
+      shape: "[Ξ]",
+      hp: 4,
+      speed: 0.3,
+      projectileType: 2,
+      cooldownReset: 14,
+    },
+    {
+      name: "attack-10",
+      shape: "{Ξ}",
+      hp: 2,
+      speed: 0.4,
+      projectileType: 2,
+      cooldownReset: 9,
+    },
+    {
+      name: "phase-11",
+      shape: "(Ψ)",
+      hp: 2,
+      speed: 0.4,
+      projectileType: 4,
+      cooldownReset: 7,
     },
   ],
   projectileData: [
-    {
+    {//0
       speed: 0.5,
       damage: 1,
-      shapes: "—|\\/"
+      shapes: "—|\\/",
     },
-    {
-      speed: 0.4,
+    {//1
+      speed: 0.3,
       damage: 2,
-      shapes: "═‖⑊⸗"
+      shapes: "═‖⑊⸗",
     },
-    {
+    {//2
       speed: 0.9,
       damage: 5,
-      shapes: "━╹🙽🙼"
+      shapes: "━╹╲╱" // 🙽🙼",
     },
-    {
+    {//3
       speed: 0.3,
       damage: 10,
-      shapes: "••••"
+      shapes: "••••",
     },
-    {
+    {//4
       speed: 0.6,
       damage: 1,
-      shapes: "◜◝◞◟"
-    }
+      shapes: "◜◝◞◟",
+    },
   ],
 
   numOfTeams: 6,
@@ -83,7 +182,7 @@ const global = {
     [0, 127, 255],
     [0, 255, 0],
     [255, 255, 0],
-    [60, 60, 60]
+    [60, 60, 60],
   ],
 };
 const keys = {};
@@ -128,62 +227,71 @@ function draw() {
 
 class FloatingText {
   constructor(team, x, y, txt) {
-    objs.push(this)
-    this.team = team
-    this.x = x
-    this.y = y
-    this.shape = txt
+    objs.push(this);
+    this.team = team;
+    this.x = x;
+    this.y = y;
+    this.shape = txt;
   }
   update() {}
 }
 
 class Portal {
-  constructor(team, x, y, shape) {
-    objs.push(this)
-    enemies.push(this)
-    this.team = team
-    this.x = x
-    this.y = y
-    this.shape = shape
+  constructor(x, y) {
+    this.isDead = false;
+    objs.push(this);
+    ships.push(this);
+    this.team = 2;
+    this.x = x;
+    this.y = y;
+    this.shape = "";
   }
   update(termi) {
-    let s = '123\n4☐5\n678'
-    let num = Math.floor(frameCount / 4) % 8
-    s = s.replace(num, "•").replace(/\d/g, ' ')
-    this.shape = s
+    if (ships.length === 2) {
+      let s = "212\n3P3\n212";
+      let num = 1 + (Math.floor(frameCount / 30) % 3);
+      s = s.replaceAll(num, "•").replace(/\d/g, " ");
+      this.shape = s;
+      if (Math.abs(this.x - me.x) < 2 && Math.abs(this.y - me.y) < 2) {
+        for (let s of ships) {
+          s.isDead = true;
+        }
+        me.isDead = false;
+      }
+    }
   }
 }
 
 class Wall {
   constructor(startX, startY, endX, endY) {
     // if (startX > endX) {
-    //   [startX, endX] = [endX,startX ] 
-    //   [startY, endY] = [endY,startY ] 
+    //   [startX, endX] = [endX,startX ]
+    //   [startY, endY] = [endY,startY ]
     // }
     let nw = (symbol) => {
-      new WallFragment(startX, startY, symbol)
-    }
-    let rightWards = false
+      new WallFragment(startX, startY, symbol);
+    };
+    let rightWards = false;
     while (startX !== endX) {
       if (startX < endX) {
-        rightWards = true
-        startX ++
+        rightWards = true;
+        startX++;
       } else if (startX > endX) {
-        startX --
+        startX--;
       }
-      nw("═")
+      nw("═");
     }
-    let isCorner = true
+    let isCorner = true;
     while (startY !== endY) {
-      if (!isCorner) nw("║")
+      if (!isCorner) nw("║");
       if (startY < endY) {
-        if (isCorner) nw(rightWards ? "╗" : "╔")
-        startY ++
+        if (isCorner) nw(rightWards ? "╗" : "╔");
+        startY++;
       } else if (startY > endY) {
-        if (isCorner) nw(rightWards ? "╝" : "╚")
-        startY --
+        if (isCorner) nw(rightWards ? "╝" : "╚");
+        startY--;
       }
-      if (isCorner) isCorner = false
+      if (isCorner) isCorner = false;
     }
   }
 }
@@ -224,40 +332,57 @@ class Player {
   cooldown = 0;
   wasX = 0;
   wasY = 0;
-  level = 0
+  level = 0;
 
   constructor(team, x, y) {
     objs.push(this);
     ships.push(this);
     this.team = team;
-    this.exp = 0
-    this.expJumps = [100, 200, 300, 400, 500]
-    this.expNext = this.expJumps[this.level]
+    this.exp = 0;
+    this.expJumps = [10, 20, 30, 40, 50];
+    this.expNext = this.expJumps[this.level];
     this.x = x;
     this.y = y;
     Object.assign(this, global.playerData[this.level]);
-    this.hpMax = this.hp
+    this.hpMax = this.hp;
   }
 
   displayStats(termi) {
     // wave
-    termi.setGroup(0, 2, 0, `WAVE ${wave}`)
+    termi.setGroup(0, 2, 0, `WAVE ${termi.wave}`);
 
+    let xOffset = 0
+    if (me.x <= 37 && me.y >= termi.rows - 4) {
+      xOffset = termi.cols - 40
+    }
     // hp
-    let n = 20 * this.hp / this.hpMax
-    let betweenSymbol = ' ░▒▓█'.charAt(Math.floor(5*(n%1)))
-    n = Math.floor(n) 
-    let line = ` HP: |` + '█'.repeat(n) + betweenSymbol + ' '.repeat(20-n)
-    line += `| ${this.hp} / ${this.hpMax}`
-    termi.setGroup(0, 2, termi.rows-3, line)
+    let n = (20 * this.hp) / this.hpMax;
+    let betweenSymbol = " ░▒▓█".charAt(Math.floor(5 * (n % 1)));
+    n = constrain(Math.floor(n), 0, 20);
+    let line = ` HP: |` + "█".repeat(n) + betweenSymbol + " ".repeat(20 - n);
+    line += `| ${this.hp} / ${this.hpMax}`;
+    termi.setGroup(0, 2 + xOffset, termi.rows - 3, line);
 
     // exp
-    n = 20 * this.exp / this.expNext
-    betweenSymbol = ' ░▒▓█'.charAt(Math.floor(5*(n%1)))
-    n = Math.floor(n) 
-    line = `EXP: |` + '█'.repeat(n) + betweenSymbol + ' '.repeat(20-n)
-    line += `| ${this.exp} / ${this.expNext}`
-    termi.setGroup(this.team, 2, termi.rows-2, line)
+    n = (20 * this.exp) / this.expNext;
+    betweenSymbol = " ░▒▓█".charAt(Math.floor(5 * (n % 1)));
+    n = constrain(Math.floor(n), 0, 20);
+    line = `EXP: |` + "█".repeat(n) + betweenSymbol + " ".repeat(20 - n);
+    line += `| ${this.exp} / ${this.expNext}`;
+    termi.setGroup(this.team, 2 + xOffset, termi.rows - 2, line);
+    
+  }
+
+  gainExp(fromEnemy) {
+    // Assume fromEnemy's lastDamagedBy prop is 2 (player)
+    this.exp += fromEnemy.hpMax || 1
+    while (this.exp >= this.expNext) {
+      // Level up
+      this.exp -= this.expNext
+      this.level ++
+      this.expNext = this.expJumps[this.level];
+      Object.assign(this, global.playerData[this.level]);
+    }
   }
 
   update(termi) {
@@ -272,14 +397,21 @@ class Player {
     if (keys[DOWN_ARROW] || keys[83]) this.y += this.speed;
 
     // Bounds
-    this.x = constrain(this.x, 0, termi.cols-1-Math.ceil(this.shape.length/2))
-    this.y = constrain(this.y, 0, termi.rows-1)
+    this.x = constrain(
+      this.x,
+      0,
+      termi.cols - 1 - Math.ceil(this.shape.length / 2)
+    );
+    this.y = constrain(this.y, 0, termi.rows - 1);
 
     // Click to shoot
     if (mouseIsPressed) {
       if (this.cooldown >= this.cooldownReset) {
         this.cooldown = 0;
         new Projectile(this, { x: termi.mX, y: termi.mY }, 0);
+
+
+        // why mX?\\\\\\\\\\\\\\\\
       }
     }
     if (this.cooldown < this.cooldownReset) {
@@ -288,9 +420,9 @@ class Player {
 
     // Level up
     if (this.exp >= this.expNext) {
-      this.exp -= this.expNext
-      this.level ++
-      this.expNext = this.expJumps[this.level]
+      this.exp -= this.expNext;
+      this.level++;
+      this.expNext = this.expJumps[this.level];
       Object.assign(this, global.playerData[this.level]);
     }
   }
@@ -306,6 +438,7 @@ class Enemy {
   cooldown = 0;
   wasX = 0;
   wasY = 0;
+  ai = {}
 
   constructor(team, x, y, type) {
     objs.push(this);
@@ -322,6 +455,29 @@ class Enemy {
     // Movement
     this.wasX = this.x;
     this.wasY = this.y;
+
+    if (this.ai.step) {
+      this.ai.step ++
+      if (this.ai.step >= 60) this.ai.step = 1
+    } else {
+      this.ai.step = (Math.random() * 60 + frameCount) % 60 + 1
+    }
+    if (this.ai.step === 1 || !this.ai.randX) {
+      this.ai.randX = constrain(this.x + random(-50, 50), 2, termi.cols - 3)
+      this.ai.randY = constrain(this.y + random(-5, 5), 2, termi.rows - 3)
+    } else if (this.ai.step <= 30) {
+      if (this.x < this.ai.randX - this.speed) {
+        this.x += this.speed
+      } else if (this.x > this.ai.randX + this.speed) {
+        this.x -= this.speed
+      }
+      if (this.y < this.ai.randY - this.speed) {
+        this.y += this.speed
+      } else if (this.y > this.ai.randY + this.speed) {
+        this.y -= this.speed
+      }
+    }
+    
 
     // Shoot logic
     if (me?.hp > 0 && ++this.cooldown > this.cooldownReset) {
@@ -366,15 +522,16 @@ class Projectile {
     // Movement
     let t = this.target;
     if (this.speed) {
-        this.x += this.velX;
-        this.y += this.velY;
-        if (abs(this.velX) > abs(this.velY) * 4) {
-          this.shape = this.shapes[0]
-        } else if (abs(this.velX) * 4 < abs(this.velY)) {
-          this.shape = this.shapes[1]
-        } else {
-          this.shape = this.velX * this.velY > 0 ? this.shapes[2] : this.shapes[3];
-        }
+      this.x += this.velX;
+      this.y += this.velY;
+      if (abs(this.velX) > abs(this.velY) * 4) {
+        this.shape = this.shapes[0];
+      } else if (abs(this.velX) * 4 < abs(this.velY)) {
+        this.shape = this.shapes[1];
+      } else {
+        this.shape =
+          this.velX * this.velY > 0 ? this.shapes[2] : this.shapes[3];
+      }
     }
 
     // Collisions with objects
@@ -403,6 +560,7 @@ class Projectile {
 }
 
 class Terminal {
+  wave = 0
   fullscreen = true;
   x = 0;
   y = 1;
@@ -416,11 +574,47 @@ class Terminal {
   state = "intro";
   userTyped = "";
   favoriteLetter = "";
-  introFrames =99999999999///! 0
+  introFrames = 99999999999; ///! 0
+  openingTxt = `\
+  ███████╗██████╗  █████╗  ██████╗███████╗   ███████╗██╗  ██╗███████╗
+  ██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝   ██╔════╝╚██╗██╔╝██╔════╝
+  ███████╗██████╔╝███████║██║     █████╗     █████╗   ╚███╔╝ █████╗  
+  ╚════██║██╔═══╝ ██╔══██║██║     ██╔══╝     ██╔══╝   ██╔██╗ ██╔══╝  
+  ███████║██║     ██║  ██║╚██████╗███████╗██╗███████╗██╔╝ ██╗███████╗
+  ╚══════╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝`;
 
   constructor() {
     this.onResizeWindow();
     this.clearTxt(true);
+  }
+
+  gameover() {
+    this.wave = 0;
+    this.fullscreen = true
+    this.whiteWashTxt();
+    this.userTyped = "";
+    this.introFrames = 0;
+    this.state = "gameover";
+  }
+
+  whiteWashTxt() {
+    for (let team = 0; team < global.numOfTeams; team++) {
+      for (let i = 0; i < this.rows; i++) {
+        let t = this.txt[team][i];
+        for (let j = 0; j < this.cols; j++) {
+          let char = t[j];
+          if (char !== " ") {
+            if (team) {
+              this.txt[team][i][j] = " ";
+              this.txt[0][i][j] = char;
+            }
+          }
+          if (i === this.rows - 1) {
+            this.txt[0][i][j] = " "; // Clear bottom row
+          }
+        }
+      }
+    }
   }
 
   clearTxt(hardClear) {
@@ -433,18 +627,18 @@ class Terminal {
         }
         this.txt.push(txtInner);
       }
-      return
+      return;
     }
 
     for (let team = 0; team < global.numOfTeams; team++) {
       for (let i = 0; i < this.rows; i++) {
-        let t = this.txt[team][i]
-        for (let j = 0; j < this.cols; j ++) {
-          let char = t[j]
+        let t = this.txt[team][i];
+        for (let j = 0; j < this.cols; j++) {
+          let char = t[j];
           if (char !== " ") {
-            t[j] = " "
+            t[j] = " ";
             if (team) {
-              this.txt[5][i][j] = char
+              this.txt[5][i][j] = char;
             }
           }
         }
@@ -477,7 +671,6 @@ class Terminal {
 
   onKeyPressed(key) {
     if (this.state === "intro") {
-
       // Type 'space.exe' or 'cd login'
       if (this.introFrames === 0) {
         if (key === "Backspace") {
@@ -488,12 +681,28 @@ class Terminal {
           this.userTyped += key;
         }
       } else {
-        if (key.length === 1) this.favoriteLetter = key
-        else if (key === "Enter") this.favoriteLetter += " "
+        if (key.length === 1) this.favoriteLetter = key;
+        else if (key === "Enter") this.favoriteLetter += " ";
       }
-    } else {
-      if (key == "f") {// f key
-        this.fullscreen = !this.fullscreen
+    } else if (this.state === "gameover") {
+      if (key === "Backspace") {
+        this.userTyped = this.userTyped.slice(0, this.userTyped.length - 1);
+      } else if (key === "Enter") {
+        if (this.userTyped[0].toLowerCase() == "y") {
+          generateWave(this.wave, true);
+          this.state = "singleplayer";
+        } else {
+          this.favoriteLetter = ""; // don't remember favorite letter
+          this.state = "intro";
+        }
+        this.userTyped = "";
+      } else if (key.length === 1) {
+        this.userTyped += key;
+      }
+    } else if (this.state === "singleplayer") {
+      if (this.wave >= 4 && keyCode === 32) {
+        // spacebar key
+        this.fullscreen = !this.fullscreen;
       }
     }
   }
@@ -598,7 +807,7 @@ class Terminal {
         "Loading" + ".".repeat(Math.floor(this.introFrames / 10) % 4)
       );
       this.introFrames++;
-    } else  {
+    } else {
       this.setGroup(
         0,
         0,
@@ -613,12 +822,14 @@ class Terminal {
         "                             " + this.favoriteLetter
       );
       if (this.favoriteLetter.length >= 2) {
-        console.log(this.introFrames)
-        this.introFrames ++
+        let ind = this.openingTxt.length * (this.introFrames - 60) / 90
+        let display = this.openingTxt.slice(0, ind)
+        this.setGroup(0, 40, 12, display)
+        this.introFrames++;
         if (this.introFrames > 180) {
-          console.log('START')
-          this.state = "singleplayer"
-          generateWave(0)
+          console.log("START");
+          this.state = "singleplayer";
+          generateWave(this.wave, true);
         }
       }
     }
@@ -639,7 +850,7 @@ class Terminal {
     }
 
     // Display text
-    let renderOrder = [5, 1, 2, 3, 4, 0]
+    let renderOrder = [5, 1, 2, 3, 4, 0];
     let snapX = 0;
     let snapY = 0;
     if (this.fullscreen) {
@@ -687,24 +898,28 @@ class Terminal {
       }
     }
 
-    this.clearTxt();
-
     switch (this.state) {
       case "intro": {
-        this.introState()
+        this.clearTxt();
+        this.introState();
         break;
       }
 
       case "singleplayer": {
-        // 
-
-        // FPS indicator
+        this.clearTxt();
         this.setGroup(0, this.cols - 6, 0, frameRate().toFixed(0) + " FPS");
         break;
       }
 
-      case "upgrade": {
-        this.setGroup(0, )
+      case "gameover": {
+        this.setGroup(
+          2,
+          0,
+          this.rows - 1,
+          "Continue? (Y/N) " +
+            this.userTyped +
+            ["_", "                "][Number(frameCount % 60 < 30)]
+        );
         break;
       }
     }
@@ -712,41 +927,71 @@ class Terminal {
 }
 
 const terminal = new Terminal();
-let wave = 0;
 let objs = [];
 let ships = [];
 let walls = [];
 let projectiles = [];
 let me;
 
-function generateWave(wave) {
+function randInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function randX() {
+  return randInt(3, terminal.cols - 4)
+}
+function randY() {
+  return randInt(3, terminal.rows - 4)
+}
+
+function generateWave(wave, initPlayer) {
   // Hard clear background
-  terminal.clearTxt(true)
+  terminal.clearTxt(true);
 
-
-  if (wave === 0) {
+  if (initPlayer) {
     me = new Player(2, 28, 7);
-    me.shape = `(${terminal.favoriteLetter.charAt(0)})`
+    me.shape = `(${terminal.favoriteLetter.charAt(0)})`;
   }
-  enemies = [me]
-  walls = []
-  projectiles = []
-  objs = [me]
+  ships = [me];
+  walls = [];
+  projectiles = [];
+  objs = [me];
 
-  let data = global.waveData[wave]
+  let data = global.waveData[wave];
+  if (!data) {
+    data = `p,${randX()},${randY()}|`
+    for (let i = 0; i < wave - 4; i ++) {
+      console.log(i, data)
+      if (i%5 === 4 && wave > 15) {
+        // third team ship
+        data += "e,3," + randX() + "," + randY() + "," + randInt(0, 11) + "|"
+      } else if (i%5 === 2) {
+        //data += "w," + randInt(0, terminal.cols-1) + ","  + randInt(0, terminal.rows-1) + randInt(0, terminal.cols-1) + ","  + randInt(0, terminal.rows-1) + "|"
+      } else {
+        // enemy ship
+        data += "e,1," + randX() + "," + randY() + "," + randInt(0, 11) + "|"
+      }
+    }
+    data = data.slice(0, data.length - 1)
+    
+  }
+  console.log('LASSSS',data)
   let classes = {
-    "e": Enemy,
-    "w": Wall,
-    "f": WallFragment,
-    "t": FloatingText,
-    "p": Portal
-  }
+    e: Enemy,
+    w: Wall,
+    f: WallFragment,
+    t: FloatingText,
+    p: Portal,
+  };
   for (let d of data.split("|")) {
-    let entityData = d.split(',')
-    let args = entityData.slice(1).map(val => isNaN(val) ? val : parseInt(val))
-    new classes[entityData[0]](...args)
+    let entityData = d.split(",");
+    console.log("new", entityData);
+    let args = entityData
+      .slice(1)
+      .map((val) => (isNaN(val) ? val : parseInt(val)));
+    new classes[entityData[0]](...args);
   }
-
 }
 
 function mainLoop() {
@@ -756,50 +1001,59 @@ function mainLoop() {
     image(global.imgBG, 0, 0, global.width, global.height);
   }
 
-  for (let i = objs.length - 1; i >= 0; i--) {
-    let obj = objs[i];
+  if (terminal.state === "singleplayer" || terminal.state === "multiplayer") {
+    for (let i = objs.length - 1; i >= 0; i--) {
+      let obj = objs[i];
 
-    // Update object
-    obj.update(terminal);
-    if (obj.lastDamagedBy >= 0) obj.lastDamagedBy = -1;
+      // Update object
+      obj.update(terminal);
 
-    // Handle HP/death
-    if (obj.isDead) {
-      objs.splice(i, 1);
-    } else if (obj?.hp <= 0) {
-      obj.isDead = true; // Live for 1 more frame
+      // Handle HP/death
+      if (obj.isDead) {
+        objs.splice(i, 1);
+      } else if (obj?.hp <= 0) {
+        if (obj.lastDamagedBy === 2) {
+          me.gainExp(obj)
+        }
+        obj.isDead = true; // Live for 1 more frame
+      }
+
+      // Clear damaged-by status
+      if (frameCount % 13 === 3) {
+        if (obj.lastDamagedBy >= 0) obj.lastDamagedBy = -1;
+      }
     }
-  }
 
-  // Empty dead objects from arrays
-  ships = ships.filter((s) => !s.isDead);
-  walls.forEach((s) => s.postUpdate());
-  walls = walls.filter((s) => !s.isDead);
+    // Empty dead objects from arrays
+    ships = ships.filter((s) => !s.isDead);
+    walls.forEach((s) => s.postUpdate());
+    walls = walls.filter((s) => !s.isDead);
 
-  // Draw objects
-  for (let obj of objs) {
-    terminal.setGroup(
-      obj.lastDamagedBy >= 0 ? obj.lastDamagedBy : obj.team,
-      Math.round(obj.x),
-      Math.round(obj.y),
-      obj.shape
-    );
-  }
+    // Draw objects
+    for (let obj of objs) {
+      terminal.setGroup(
+        obj.lastDamagedBy >= 0 ? obj.lastDamagedBy : obj.team,
+        Math.round(obj.x),
+        Math.round(obj.y),
+        obj.shape
+      );
+    }
 
-  // Show player stats (hp and exp)
-  if (me) {
-    me.displayStats(terminal)
-  }
+    // Show player stats (hp and exp)
+    if (me) {
+      me.displayStats(terminal);
+    }
 
-  // Advance wave
-  if (terminal.state === "singleplayer" && ships.length <= 1) {
-    wave ++
-    generateWave(wave)
-  }
+    // Lose wave
+    if (me?.hp <= 0) {
+      terminal.gameover();
+    }
 
-  // Lose wave
-  else if (me?.hp <= 10) {
-    me.hp = 10///////////////////wip
+    // Advance wave
+    else if (terminal.state === "singleplayer" && ships.length <= 1) {
+      terminal.wave++;
+      generateWave(terminal.wave);
+    }
   }
 
   terminal.update();
