@@ -18,7 +18,7 @@ TEAM 4 - YELLOW
 const global = {
   waveData: [
     "p,60,8|w,90,14,40,-1|t,4,3,3,Move with the WASD or arrow keys\n\n  Reach the (P)ortal",
-    "p,5,3|e,1,3,20,0|w,0,27,25,0|t,4,60,3,Shoot with the mouse button\n\n  Destroy all enemies to advance",
+    "p,5,3|e,1,3,20,0|w,0,27,45,0|t,4,60,3,Shoot with the mouse button\n\n  Destroy all enemies to advance",
     "p,120,27|w,40,0,40,15|w,80,16,80,31|e,1,65,19,0|e,1,115,6,0|e,1,115,21,1",
     "p,10,4|w,45,10,85,20|w,85,20,45,10|e,1,65,15,0|e,1,62,15,0|e,1,65,15,0|e,1,65,15,0|e,1,65,15,2",
     "p,110,15|w,30,0,30,31|w,60,0,60,31|w,90,0,90,31|t,4,2,10,There are too many enemies\nto fight at once.\nPress SPACEBAR to toggle\nfullscreen.|t,4,32,16,Enemies will not shoot\nwhen not in view.\nUse this to your advantage."
@@ -182,7 +182,7 @@ const global = {
     [0, 127, 255],
     [0, 255, 0],
     [255, 255, 0],
-    [60, 60, 60],
+    [50, 50, 50],
   ],
 };
 const keys = {};
@@ -349,7 +349,7 @@ class Player {
 
   displayStats(termi) {
     // wave
-    termi.setGroup(0, 2, 0, `WAVE ${termi.wave}`);
+    termi.setGroup(0, 2, 1, `WAVE ${termi.wave}`);
 
     let xOffset = 0
     if (me.x <= 37 && me.y >= termi.rows - 4) {
@@ -405,13 +405,10 @@ class Player {
     this.y = constrain(this.y, 0, termi.rows - 1);
 
     // Click to shoot
-    if (mouseIsPressed) {
+    if (mouseIsPressed && termi.mouseInTerminal) {
       if (this.cooldown >= this.cooldownReset) {
         this.cooldown = 0;
         new Projectile(this, { x: termi.mX, y: termi.mY }, 0);
-
-
-        // why mX?\\\\\\\\\\\\\\\\
       }
     }
     if (this.cooldown < this.cooldownReset) {
@@ -560,8 +557,9 @@ class Projectile {
 }
 
 class Terminal {
-  wave = 0
+  wave = 5
   fullscreen = true;
+  mouseInTerminal = true;
   x = 0;
   y = 1;
   w = 0;
@@ -595,6 +593,7 @@ class Terminal {
     this.userTyped = "";
     this.introFrames = 0;
     this.state = "gameover";
+    document.getElementById("gameover").style.display = "block"
   }
 
   whiteWashTxt() {
@@ -696,6 +695,7 @@ class Terminal {
           this.state = "intro";
         }
         this.userTyped = "";
+        document.getElementById("gameover").style.display = "none"
       } else if (key.length === 1) {
         this.userTyped += key;
       }
@@ -780,13 +780,13 @@ class Terminal {
       0,
       0,
       0,
-      "Welcome. Type the command '         ' to begin singleplayer mode.\nType '        ' to pick a username and join an open multiplayer game."
+      "\nWelcome. Type the command '         ' to begin singleplayer mode."
     );
     this.setGroup(
       3,
       0,
       0,
-      "                           space.exe\n      cd login"
+      "\n                           space.exe"
     );
     this.setGroup(
       0,
@@ -883,8 +883,14 @@ class Terminal {
         }
         text(displayText, snapX, snapY);
       }
+    
+      this.windowedX1 = startX
+      this.windowedY1 = startY
+      this.windowedX2 = startX + printCharsX
+      this.windowedY2 = startY + printCharsY
     }
 
+    // Move terminal window
     if (!this.fullscreen) {
       this.drawCommandPromptFrame();
       if (
@@ -898,6 +904,16 @@ class Terminal {
       }
     }
 
+    
+
+    // If mouse inside terminal window
+    if (this.fullscreen) {
+      this.mouseInTerminal = true
+    } else {
+      this.mouseInTerminal = mouseX > this.x && mouseX  < this.x + this.w && mouseY > this.y + this.w * 0.038 && mouseY < this.y + this.h
+    }
+
+    // States
     switch (this.state) {
       case "intro": {
         this.clearTxt();

@@ -10,10 +10,35 @@ html, body {
 canvas {
   display: block;
 }
+#gameover {
+  display: none;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.center {
+    position: absolute;
+    top:  50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+#followme {
+  background-color: rgba(22, 22, 22, 0.75);
+  top: 40%;
+  text-align: center;
+  padding: 20px;
+  border-radius: 5px;
+  color: white
+}
+#followme a {
+  color: rgb(255, 60, 229)
+}
     </style>
   </head>
   <body>
-    <main>
-    </main>
+    <div class="center" id="gameover">
+      <div id="followme">
+        <h3>Gameover</h3>
+        <p>Follow my <a href="https://github.com/githubium">GitHub</a> for more projects</p>
+      </div>
+    </div>
   </body>
 </html>
