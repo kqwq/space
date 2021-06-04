@@ -15,6 +15,10 @@ TEAM 4 - YELLOW
      5 - "memory" color overlay
 */
 
+function isWindows() {
+  return navigator.platform.indexOf('Win') > -1
+}
+
 const global = {
   waveData: [
     "p,60,8|w,90,14,40,-1|t,4,3,3,Move with the WASD or arrow keys\n\n  Reach the (P)ortal",
@@ -180,7 +184,7 @@ e,1,105,5,8|e,1,105,15,8|e,1,105,25,8|e,1,75,5,8|e,1,75,15,8|e,1,75,25,8"
     {//2
       speed: 0.9,
       damage: 5,
-      shapes: "━╹╲╱" // 🙽🙼",
+      shapes: isWindows() ? "━╹╲╱" : "—|\\/" // 🙽🙼",
     },
     {//3
       speed: 0.3,
@@ -190,7 +194,7 @@ e,1,105,5,8|e,1,105,15,8|e,1,105,25,8|e,1,75,5,8|e,1,75,15,8|e,1,75,25,8"
     {//4
       speed: 0.6,
       damage: 1,
-      shapes: "◜◝◞◟",
+      shapes: "****",
     },
   ],
 
@@ -208,7 +212,7 @@ const keys = {};
 
 function preload() {
   global.imgBG = loadImage("./assets/background.jpg");
-  global.font = "monospace"
+  global.font = isWindows() ? "Consolas" : "monospace"
 }
 
 function setup() {
@@ -1058,7 +1062,7 @@ function mainLoop() {
       let obj = objs[i];
 
       // Update object
-    if (!terminal.fullscreen &&
+    if (obj !== me && !terminal.fullscreen &&
         (
           obj.x < terminal.windowedX1 ||
           obj.y < terminal.windowedY1 ||
