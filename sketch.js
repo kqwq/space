@@ -588,7 +588,7 @@ class Projectile {
 }
 
 class Terminal {
-  wave = 4
+  wave = 0
   fullscreen = true;
   mouseInTerminal = true;
   x = 0;
