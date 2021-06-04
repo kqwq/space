@@ -415,6 +415,7 @@ class Player {
       Object.assign(this, global.playerData[this.level]);
       this.hpMax = this.hp;
     }
+    this.hpMax = this.hp;
   }
 
   update(termi) {
