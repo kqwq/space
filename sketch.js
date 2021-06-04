@@ -193,7 +193,7 @@ e,1,105,5,8|e,1,105,15,8|e,1,105,25,8|e,1,75,5,8|e,1,75,15,8|e,1,75,25,8"
     },
     {//4
       speed: 0.6,
-      damage: 1,
+      damage: 5,
       shapes: "****",
     },
   ],
@@ -1023,7 +1023,7 @@ function generateWave(wave, initPlayer) {
     data = `p,${randX()},${randY()}|`
     for (let i = 0; i < wave; i ++) {
       console.log(i, data)
-      if (i%5 === 0 || Math.random() < 0.3) {
+      if (i%5 === 0 || Math.random() < 0.25) {
         data += "w," + randInt(0, terminal.cols-1) + ","  + randInt(0, terminal.rows-1) + "," + randInt(0, terminal.cols-1) + ","  + randInt(0, terminal.rows-1) + "|"
       } else {
         // enemy ship
