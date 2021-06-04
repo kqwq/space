@@ -21,7 +21,8 @@ const global = {
     "p,5,3|e,1,3,20,0|w,0,27,45,0|t,4,60,3,Shoot with the mouse button\n\n  Destroy all enemies to advance",
     "p,120,27|w,40,0,40,15|w,80,16,80,31|e,1,65,19,0|e,1,115,6,0|e,1,115,21,1",
     "p,10,4|w,45,10,85,20|w,85,20,45,10|e,1,65,15,0|e,1,62,15,0|e,1,65,15,0|e,1,65,15,0|e,1,65,15,2",
-    "p,110,15|w,30,0,30,31|w,60,0,60,31|w,90,0,90,31|t,4,2,10,There are too many enemies\nto fight at once.\nPress SPACEBAR to toggle\nfullscreen.|t,4,32,16,Enemies will not shoot\nwhen not in view.\nUse this to your advantage."
+    "p,110,15|w,30,0,30,31|w,60,0,60,31|w,90,0,90,31|t,4,2,10,There are too many enemies\nto fight at once.\nPress SPACEBAR to toggle\nfullscreen.|t,4,32,16,Enemies will not shoot\nwhen not in view.\nUse this to your advantage.|\
+e,1,105,5,8|e,1,105,15,8|e,1,105,25,8|e,1,75,5,8|e,1,75,15,8|e,1,75,25,8"
   ],
 
   fontHeightToWidth: 1.9,
@@ -47,6 +48,24 @@ const global = {
       speed: 0.34,
       cooldownReset: 6,
       projectileType: 1,
+    },
+    {
+      hp: 40,
+      speed: 0.35,
+      cooldownReset: 10,
+      projectileType: 2,
+    },
+    {
+      hp: 50,
+      speed: 0.36,
+      cooldownReset: 15,
+      projectileType: 2,
+    },
+    {
+      hp: 60,
+      speed: 0.36,
+      cooldownReset: 10,
+      projectileType: 2,
     },
   ],
   enemyData: [
@@ -272,6 +291,7 @@ class Wall {
       new WallFragment(startX, startY, symbol);
     };
     let rightWards = false;
+    let timeout = 100
     while (startX !== endX) {
       if (startX < endX) {
         rightWards = true;
@@ -280,8 +300,12 @@ class Wall {
         startX--;
       }
       nw("═");
+      if (--timeout <= 0) {
+        break
+      }
     }
     let isCorner = true;
+    timeout = 100
     while (startY !== endY) {
       if (!isCorner) nw("║");
       if (startY < endY) {
@@ -292,6 +316,9 @@ class Wall {
         startY--;
       }
       if (isCorner) isCorner = false;
+      if (--timeout <= 0) {
+        break
+      }
     }
   }
 }
@@ -339,7 +366,7 @@ class Player {
     ships.push(this);
     this.team = team;
     this.exp = 0;
-    this.expJumps = [10, 20, 30, 40, 50];
+    this.expJumps = [10, 20, 30, 40, 50, 9999];
     this.expNext = this.expJumps[this.level];
     this.x = x;
     this.y = y;
@@ -382,6 +409,7 @@ class Player {
       this.level ++
       this.expNext = this.expJumps[this.level];
       Object.assign(this, global.playerData[this.level]);
+      this.hpMax = this.hp;
     }
   }
 
@@ -480,6 +508,9 @@ class Enemy {
     if (me?.hp > 0 && ++this.cooldown > this.cooldownReset) {
       this.cooldown = 0;
       new Projectile(this, me, this.projectileType);
+      if (this.projectileType == 2 && Math.random() < 0.3) {
+        this.cooldown = -200
+      }
     }
   }
 }
@@ -557,7 +588,7 @@ class Projectile {
 }
 
 class Terminal {
-  wave = 5
+  wave = 4
   fullscreen = true;
   mouseInTerminal = true;
   x = 0;
@@ -572,7 +603,7 @@ class Terminal {
   state = "intro";
   userTyped = "";
   favoriteLetter = "";
-  introFrames = 99999999999; ///! 0
+  introFrames = 0;//99999999999; ///! 0
   openingTxt = `\
   ███████╗██████╗  █████╗  ██████╗███████╗   ███████╗██╗  ██╗███████╗
   ██╔════╝██╔══██╗██╔══██╗██╔════╝██╔════╝   ██╔════╝╚██╗██╔╝██╔════╝
@@ -675,7 +706,11 @@ class Terminal {
         if (key === "Backspace") {
           this.userTyped = this.userTyped.slice(0, this.userTyped.length - 1);
         } else if (key === "Enter") {
-          this.introFrames = 1;
+          if (this.userTyped.includes("space")) {
+            this.introFrames = 1;
+          } else {
+            this.userTyped = ""
+          }
         } else if (key.length === 1) {
           this.userTyped += key;
         }
@@ -703,6 +738,10 @@ class Terminal {
       if (this.wave >= 4 && keyCode === 32) {
         // spacebar key
         this.fullscreen = !this.fullscreen;
+        this.x = (me.x / this.cols) * global.width - this.w / 2;
+        this.x = Math.max(0, this.x)
+        this.y = (me.y / this.rows) * global.height - this.h / 2;
+        this.y = Math.max(0, this.y)
       }
     }
   }
@@ -977,16 +1016,13 @@ function generateWave(wave, initPlayer) {
   let data = global.waveData[wave];
   if (!data) {
     data = `p,${randX()},${randY()}|`
-    for (let i = 0; i < wave - 4; i ++) {
+    for (let i = 0; i < wave; i ++) {
       console.log(i, data)
-      if (i%5 === 4 && wave > 15) {
-        // third team ship
-        data += "e,3," + randX() + "," + randY() + "," + randInt(0, 11) + "|"
-      } else if (i%5 === 2) {
-        //data += "w," + randInt(0, terminal.cols-1) + ","  + randInt(0, terminal.rows-1) + randInt(0, terminal.cols-1) + ","  + randInt(0, terminal.rows-1) + "|"
+      if (i%5 === 0 || Math.random() < 0.3) {
+        data += "w," + randInt(0, terminal.cols-1) + ","  + randInt(0, terminal.rows-1) + "," + randInt(0, terminal.cols-1) + ","  + randInt(0, terminal.rows-1) + "|"
       } else {
         // enemy ship
-        data += "e,1," + randX() + "," + randY() + "," + randInt(0, 11) + "|"
+        data += "e,1," + randX() + "," + randY() + "," + randInt(0, Math.min(11, wave)) + "|"
       }
     }
     data = data.slice(0, data.length - 1)
@@ -1022,6 +1058,17 @@ function mainLoop() {
       let obj = objs[i];
 
       // Update object
+    if (!terminal.fullscreen &&
+        (
+          obj.x < terminal.windowedX1 ||
+          obj.y < terminal.windowedY1 ||
+          obj.x > terminal.windowedX2 ||
+          obj.y > terminal.windowedY2
+        )) {
+          continue
+        }
+
+
       obj.update(terminal);
 
       // Handle HP/death
