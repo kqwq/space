@@ -208,7 +208,7 @@ const keys = {};
 
 function preload() {
   global.imgBG = loadImage("./assets/background.jpg");
-  global.font = "Consolas";
+  global.font = "monospace"
 }
 
 function setup() {
